@@ -14,8 +14,7 @@ export async function fetchRedis(
                 Authorization: `Bearer ${authToken}`
             },
             cache: 'no-store',
-        }
-    )
+    })
 
     if(!response.ok) {
         throw new Error(`Error executiing Redis command: ${response.statusText}`)
