@@ -34,7 +34,8 @@ export const authOptions: NextAuthOptions = {
         }),
     ],
     callbacks: {
-        async jwt ({token, user}) {
+        async jwt ({ token, user }) {
+
             const dbUserResult = await fetchRedis('get', `user:${token.id}`) as string | null
 
             if(!dbUserResult) {
@@ -51,7 +52,7 @@ export const authOptions: NextAuthOptions = {
                 picture: dbUser.image,
             }
         },
-        async session({session, token}) {
+        async session({ session, token }) {
             if(token) {
                 session.user.id = token.id
                 session.user.name = token.name
