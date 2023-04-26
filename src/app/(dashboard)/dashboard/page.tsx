@@ -19,7 +19,15 @@ const page = async ({}) => {
         friends.map(async (friend) => {
             const [lastMessageRaw] = (await fetchRedis('zrange', `chat:${chatHrefConstructor(session.user.id, friend.id)}:messages`, -1, -1)) as string[]
 
-            const lastMessage = JSON.parse(lastMessageRaw) as Message
+            let lastMessage: Message | undefined
+
+            if (lastMessageRaw) {
+                try {
+                    lastMessage = JSON.parse(lastMessageRaw) as Message
+                } catch (e) {
+                    console.error('Error parsing JSON:', e)
+                }
+            }
 
             return {
                 ...friend,
@@ -50,9 +58,9 @@ const page = async ({}) => {
                             <h4 className="text-lg font-semibold">{friend.name}</h4>
                             <p className="mt-1 max-w-md">
                                 <span className="text-zinc-400">
-                                    {friend.lastMessage.senderId === session.user.id ? 'You: ' : ''}
+                                    {friend.lastMessage && friend.lastMessage.senderId === session.user.id ? 'You: ' : ''}
                                 </span>
-                                {friend.lastMessage.text}
+                                {friend.lastMessage && friend.lastMessage.text}
                             </p>
                         </div>
                     </Link>
